@@ -1,6 +1,5 @@
 const { z, email } = require("zod");
 
-
 // Zod Signup Schema
 const signupSchema = z.object({
   email: z.string().email(),
@@ -23,8 +22,15 @@ const signinSchema = z.object({
     .regex(/[0-9]/, "password must contain at least one number"),
 });
 
+const courseAddSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  price: z.string(),
+  imageUrl: z.string(),
+});
 
 module.exports = {
-    signupSchema,
-    signinSchema
-}
+  signupSchema,
+  signinSchema,
+  courseAddSchema,
+};
