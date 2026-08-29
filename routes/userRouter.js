@@ -105,7 +105,9 @@ userRouter.post("/signin", async function (req, res) {
   }
 });
 
-userRouter.post("/purchase", function (req, res) {});
+userRouter.post("/purchase", function (req, res) {
+  
+});
 
 module.exports = {
   userRouter: userRouter,

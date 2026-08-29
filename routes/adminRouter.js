@@ -7,10 +7,10 @@ const {
   signupSchema,
   signinSchema,
   courseAddSchema,
-  courseUpdateSchema
+  courseUpdateSchema,
 } = require("../routes/zodSchema");
 
-const { adminAuth } = require('../middlewares/auth.middleware')
+const { adminAuth } = require("../middlewares/auth.middleware");
 
 //signup route
 adminRouter.post("/signup", async function (req, res) {
@@ -113,10 +113,10 @@ adminRouter.post("/signin", async function (req, res) {
 });
 
 //course route
-adminRouter.post("/course",adminAuth, async function (req, res) {
+adminRouter.post("/course", adminAuth, async function (req, res) {
   try {
     //zod validation and validation check.
-    const adminId = req.userId
+    const adminId = req.userId;
     const validation = courseAddSchema.safeParse(req.body);
 
     if (!validation.success) {
@@ -137,7 +137,7 @@ adminRouter.post("/course",adminAuth, async function (req, res) {
       description,
       price,
       imageUrl,
-      creatorId : adminId
+      creatorId: adminId,
     });
 
     res.status(201).json({
@@ -151,12 +151,12 @@ adminRouter.post("/course",adminAuth, async function (req, res) {
     });
   }
 });
-//course-put route
-adminRouter.put("/course",adminAuth, async function (req, res) {
 
-   try {
+//course-put route
+adminRouter.put("/course", adminAuth, async function (req, res) {
+  try {
     //zod validation and validation check.
-    const adminId = req.userId
+    const adminId = req.userId;
     const validation = courseUpdateSchema.safeParse(req.body);
 
     if (!validation.success) {
@@ -172,15 +172,18 @@ adminRouter.put("/course",adminAuth, async function (req, res) {
     const { title, description, price, imageUrl, courseId } = validation.data;
 
     //save to mongo.
-    await courseModel.updateOne({
+    await courseModel.updateOne(
+      {
         _id: courseId,
         creatorId: adminId,
-    },{
-      title,
-      description,
-      price,
-      imageUrl,
-    });
+      },
+      {
+        title,
+        description,
+        price,
+        imageUrl,
+      },
+    );
 
     res.status(201).json({
       message: "course updated",
@@ -193,21 +196,20 @@ adminRouter.put("/course",adminAuth, async function (req, res) {
     });
   }
 });
+
 //course/bulk route
 adminRouter.get("/course/bulk", adminAuth, async function (req, res) {
   try {
-    const adminId = req.userId
+    const adminId = req.userId;
 
     const courses = await courseModel.find({
-      creatorId: adminId
-    })
+      creatorId: adminId,
+    });
 
-    
-      return res.status(201).json({
-        message: "here is course list",
-        courses
-      })
-    
+    return res.status(201).json({
+      message: "here is course list",
+      courses,
+    });
   } catch (error) {
     console.log("course fetching error: ", error);
     return res.status(500).json({
