@@ -27,10 +27,21 @@ const courseAddSchema = z.object({
   description: z.string(),
   price: z.string(),
   imageUrl: z.string(),
+  creatorId : z.string()
+});
+
+const courseUpdateSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  price: z.string(),
+  imageUrl: z.string(),
+  courseId : z.string()
+
 });
 
 module.exports = {
   signupSchema,
   signinSchema,
   courseAddSchema,
+  courseUpdateSchema
 };

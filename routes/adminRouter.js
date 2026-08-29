@@ -7,6 +7,7 @@ const {
   signupSchema,
   signinSchema,
   courseAddSchema,
+  courseUpdateSchema
 } = require("../routes/zodSchema");
 
 const { adminAuth } = require('../middlewares/auth.middleware')
@@ -115,6 +116,7 @@ adminRouter.post("/signin", async function (req, res) {
 adminRouter.post("/course",adminAuth, async function (req, res) {
   try {
     //zod validation and validation check.
+    const adminId = req.userId
     const validation = courseAddSchema.safeParse(req.body);
 
     if (!validation.success) {
@@ -135,6 +137,7 @@ adminRouter.post("/course",adminAuth, async function (req, res) {
       description,
       price,
       imageUrl,
+      creatorId : adminId
     });
 
     res.status(201).json({
@@ -149,9 +152,69 @@ adminRouter.post("/course",adminAuth, async function (req, res) {
   }
 });
 //course-put route
-adminRouter.put("/course", (req, res) => {});
+adminRouter.put("/course",adminAuth, async function (req, res) {
+
+   try {
+    //zod validation and validation check.
+    const adminId = req.userId
+    const validation = courseUpdateSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      return res.status(400).json({
+        message: "validation error",
+        error: validation.error.issues.map((err) => ({
+          field: err.path.join("."),
+          message: err.message,
+        })),
+      });
+    }
+
+    const { title, description, price, imageUrl, courseId } = validation.data;
+
+    //save to mongo.
+    await courseModel.updateOne({
+        _id: courseId,
+        creatorId: adminId,
+    },{
+      title,
+      description,
+      price,
+      imageUrl,
+    });
+
+    res.status(201).json({
+      message: "course updated",
+    });
+    console.log("course updated");
+  } catch (error) {
+    console.log("course updating error: ", error);
+    return res.status(500).json({
+      message: "internal server error",
+    });
+  }
+});
 //course/bulk route
-adminRouter.post("/course/bulk", (req, res) => {});
+adminRouter.get("/course/bulk", adminAuth, async function (req, res) {
+  try {
+    const adminId = req.userId
+
+    const courses = await courseModel.find({
+      creatorId: adminId
+    })
+
+    
+      return res.status(201).json({
+        message: "here is course list",
+        courses
+      })
+    
+  } catch (error) {
+    console.log("course fetching error: ", error);
+    return res.status(500).json({
+      message: "internal server error",
+    });
+  }
+});
 
 module.exports = {
   adminRouter: adminRouter,
