@@ -2,7 +2,6 @@ const { Router } = require("express");
 const jwt = require("jsonwebtoken");
 const userRouter = Router();
 const { userModel, courseModel , purchaseModel} = require("../db");
-const { z, email } = require("zod");
 const bcrypt = require("bcrypt");
 const { userAuth } = require("../middlewares/userauth");
 const { signupSchema, signinSchema } = require("../routes/zodSchema");
